@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/lombok.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-configuration-1.6.jar" sourcepath="/home/robert/.m2/repository/commons-configuration/commons-configuration/1.6/commons-configuration-1.6-sources.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/ugh-3.0.jar" sourcepath="/ugh_new"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
