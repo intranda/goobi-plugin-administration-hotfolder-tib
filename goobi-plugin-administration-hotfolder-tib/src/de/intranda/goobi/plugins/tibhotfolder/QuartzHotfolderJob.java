@@ -47,7 +47,7 @@ public class QuartzHotfolderJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
-        XMLConfiguration config = ConfigPlugins.getPluginConfig("intranda_admin_catalogue_poller");
+        XMLConfiguration config = ConfigPlugins.getPluginConfig("intranda_admin_hotfolder_tib");
         String hotFolder = config.getString("hotfolder");
         Path hotFolderPath = Paths.get(hotFolder);
         if (!Files.exists(hotFolderPath) || !Files.isDirectory(hotFolderPath)) {

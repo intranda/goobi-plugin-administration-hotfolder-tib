@@ -71,9 +71,7 @@
 	<target name="linux" if="isUnix">
 		<echo>Using Linux path: ${pluginFolderUnix}</echo>
         <copy tofile="${pluginFolderUnix}/${filename}.jar" file="${dir.deploy}/${filename}-${git.revision}.jar" overwrite="true" />
-		<!-- 
        	<copy tofile="${pluginFolderUnix}/../GUI/${filename}-GUI.jar" file="${dir.deploy}/${filename}-GUI.jar" overwrite="true" />
-		-->
 		<copy tofile="${pluginFolderUnix}/${filename}-GUI.jar" file="${dir.deploy}/${filename}-GUI.jar" overwrite="true" />
 
 	</target>
@@ -141,7 +139,7 @@
             <manifest>
                 <attribute name="Class-Path" value="${libs.project}" />
             </manifest>
-            <fileset dir="GUI" />
+            <!--<fileset dir="GUI" />-->
             	<!-- add quartz classes to GUI jar
             	 -->
 			<fileset dir="bin">
