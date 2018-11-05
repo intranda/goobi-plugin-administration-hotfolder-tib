@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.goobi.beans.Process;
 import org.goobi.beans.Step;
@@ -79,6 +80,7 @@ public class QuartzHotfolderJob implements Job {
                             }
                         }
                     }
+                    FileUtils.deleteQuietly(dir.toFile());
                 }
             }
         } catch (IOException e) {
