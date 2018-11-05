@@ -28,11 +28,13 @@ import org.quartz.JobExecutionException;
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.managers.ProcessManager;
+import de.sub.goobi.persistence.managers.StepManager;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
 import lombok.extern.log4j.Log4j;
@@ -78,6 +80,14 @@ public class QuartzHotfolderJob implements Job {
                             try (OutputStream os = Files.newOutputStream(masterPath.resolve(file.getFileName()))) {
                                 Files.copy(file, os);
                             }
+                        }
+                    }
+                    //start first automatic step
+                    List<Step> steps = StepManager.getStepsForProcess(p.getId());
+                    for (Step s : steps) {
+                        if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN) && s.isTypAutomatisch()) {
+                            ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+                            myThread.start();
                         }
                     }
                     FileUtils.deleteQuietly(dir.toFile());
