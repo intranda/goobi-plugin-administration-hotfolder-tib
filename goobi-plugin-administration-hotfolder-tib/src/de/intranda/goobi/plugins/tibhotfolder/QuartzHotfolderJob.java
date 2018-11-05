@@ -99,6 +99,7 @@ public class QuartzHotfolderJob implements Job {
         try {
             Fileformat ff = importer.search("12", barcode, coc, prefs);
             process = cloneTemplate(template);
+            process.setTitel(barcode);
             NeuenProzessAnlegen(process, template, ff, prefs);
 
         } catch (Exception e) {
@@ -106,7 +107,6 @@ public class QuartzHotfolderJob implements Job {
             log.error(e);
             return null;
         }
-        process.setTitel(barcode);
         return process;
     }
 
