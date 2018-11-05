@@ -106,6 +106,7 @@ public class QuartzHotfolderJob implements Job {
             log.error(e);
             return null;
         }
+        process.setTitel(barcode);
         return process;
     }
 
