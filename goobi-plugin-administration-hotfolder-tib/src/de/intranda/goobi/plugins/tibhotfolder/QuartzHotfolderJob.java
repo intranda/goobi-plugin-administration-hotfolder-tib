@@ -94,7 +94,7 @@ public class QuartzHotfolderJob implements Job {
         Prefs prefs = template.getRegelsatz().getPreferences();
         String barcode = dir.getFileName().toString();
         ConfigOpacCatalogue coc = ConfigOpac.getInstance().getCatalogueByName("TIB");
-        IOpacPlugin importer = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, "GBV-MARC");
+        IOpacPlugin importer = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, "PICA");
         Process process = null;
         try {
             Fileformat ff = importer.search("12", barcode, coc, prefs);
