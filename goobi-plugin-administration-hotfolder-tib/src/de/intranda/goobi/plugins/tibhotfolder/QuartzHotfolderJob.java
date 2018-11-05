@@ -72,7 +72,7 @@ public class QuartzHotfolderJob implements Job {
                     // successfully created process. Copy files to new master-folder
                     Path masterPath = Paths.get(p.getImagesOrigDirectory(false));
                     Files.createDirectories(masterPath);
-                    try (DirectoryStream<Path> dirDs = Files.newDirectoryStream(hotFolderPath)) {
+                    try (DirectoryStream<Path> dirDs = Files.newDirectoryStream(dir)) {
                         for (Path file : dirDs) {
                             try (OutputStream os = Files.newOutputStream(masterPath.resolve(file.getFileName()))) {
                                 Files.copy(file, os);
