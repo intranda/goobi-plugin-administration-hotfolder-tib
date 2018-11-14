@@ -15,6 +15,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.goobi.beans.Process;
+import org.goobi.beans.Processproperty;
 import org.goobi.beans.Step;
 import org.goobi.managedbeans.LoginBean;
 import org.goobi.production.enums.PluginType;
@@ -34,6 +35,7 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.managers.ProcessManager;
+import de.sub.goobi.persistence.managers.PropertyManager;
 import de.sub.goobi.persistence.managers.StepManager;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacCatalogue;
@@ -77,6 +79,10 @@ public class QuartzHotfolderJob implements Job {
                     Files.createDirectories(masterPath);
                     try (DirectoryStream<Path> dirDs = Files.newDirectoryStream(dir)) {
                         for (Path file : dirDs) {
+                            String filename = file.getFileName().toString();
+                            if (filename.equalsIgnoreCase("thumbs.db") || filename.equalsIgnoreCase(".ds_store")) {
+                                continue;
+                            }
                             try (OutputStream os = Files.newOutputStream(masterPath.resolve(file.getFileName()))) {
                                 Files.copy(file, os);
                             }
@@ -109,7 +115,7 @@ public class QuartzHotfolderJob implements Job {
         IOpacPlugin importer = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, "PICA");
         Process process = null;
         try {
-            Fileformat ff = importer.search("12", barcode, coc, prefs);
+            Fileformat ff = importer.search("8535", barcode, coc, prefs);
             process = cloneTemplate(template);
             process.setTitel(barcode);
             NeuenProzessAnlegen(process, template, ff, prefs);
@@ -167,6 +173,14 @@ public class QuartzHotfolderJob implements Job {
         }
 
         ProcessManager.saveProcess(process);
+
+        Processproperty pp = new Processproperty();
+        pp.setProzess(process);
+        pp.setTitel("OLR ausführen");
+        List<?> metaList = ff.getDigitalDocument().getLogicalDocStruct().getAllMetadataByType(prefs.getMetadataTypeByName("ConferenceIndicator"));
+        String activate = metaList == null || metaList.isEmpty() ? "nein" : "ja";
+        pp.setWert(activate);
+        PropertyManager.saveProcessProperty(pp);
 
         /*
          * -------------------------------- Imagepfad hinzufügen (evtl. vorhandene zunächst löschen) --------------------------------
