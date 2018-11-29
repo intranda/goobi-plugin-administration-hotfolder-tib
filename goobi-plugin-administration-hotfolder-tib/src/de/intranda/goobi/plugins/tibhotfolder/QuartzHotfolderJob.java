@@ -14,9 +14,9 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.goobi.beans.Process;
 import org.goobi.beans.Processproperty;
 import org.goobi.beans.Step;
-import org.goobi.beans.Process;
 import org.goobi.managedbeans.LoginBean;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -52,7 +52,6 @@ public class QuartzHotfolderJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
-        System.out.println("looking for new folders in hotfolder");
         XMLConfiguration config = ConfigPlugins.getPluginConfig("intranda_admin_hotfolder_tib");
         String hotFolder = config.getString("hotfolder");
         Path hotFolderPath = Paths.get(hotFolder);
@@ -123,16 +122,17 @@ public class QuartzHotfolderJob implements Job {
             Fileformat ff = importer.search("8535", barcode, coc, prefs);
             process = cloneTemplate(template);
             process.setTitel(folderName.replace("$", "_"));
+            NeuenProzessAnlegen(process, template, ff, prefs);
             Processproperty pp = new Processproperty();
             pp.setProzess(process);
             pp.setTitel("Scanner-Name");
             pp.setWert(scanner);
             PropertyManager.saveProcessProperty(pp);
-            NeuenProzessAnlegen(process, template, ff, prefs);
 
         } catch (Exception e) {
             // TODO Write error file to hotfolder error-folder
             log.error(e);
+            e.printStackTrace();
             return null;
         }
         return process;
