@@ -48,10 +48,11 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 
 @Log4j
 public class QuartzHotfolderJob implements Job {
-    private static final long FIVEMINUTES = 1000 * 60 * 5;
+    private static final long FIVEMINUTES = 1000 * 60 * 1;
 
     @Override
     public void execute(JobExecutionContext jec) throws JobExecutionException {
+        System.out.println("looking for new folders in hotfolder");
         XMLConfiguration config = ConfigPlugins.getPluginConfig("intranda_admin_hotfolder_tib");
         String hotFolder = config.getString("hotfolder");
         Path hotFolderPath = Paths.get(hotFolder);
@@ -80,7 +81,8 @@ public class QuartzHotfolderJob implements Job {
                     try (DirectoryStream<Path> dirDs = Files.newDirectoryStream(dir)) {
                         for (Path file : dirDs) {
                             String filename = file.getFileName().toString();
-                            if (filename.equalsIgnoreCase("thumbs.db") || filename.equalsIgnoreCase(".ds_store")) {
+                            if (filename.equalsIgnoreCase("thumbs.db") || filename.equalsIgnoreCase(".ds_store") || filename.equalsIgnoreCase(
+                                    ".intranda_lock")) {
                                 continue;
                             }
                             try (OutputStream os = Files.newOutputStream(masterPath.resolve(file.getFileName()))) {
@@ -117,7 +119,7 @@ public class QuartzHotfolderJob implements Job {
         try {
             Fileformat ff = importer.search("8535", barcode, coc, prefs);
             process = cloneTemplate(template);
-            process.setTitel(barcode);
+            process.setTitel(barcode.replace("$", "_"));
             NeuenProzessAnlegen(process, template, ff, prefs);
 
         } catch (Exception e) {

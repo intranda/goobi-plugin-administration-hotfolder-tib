@@ -35,6 +35,8 @@ public class QuartzListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
+        System.out.println("registering hotfolder job for table of contents");
+        log.info("registering hotfolder job for table of contents");
         try {
             // get default scheduler
             SchedulerFactory schedFact = new StdSchedulerFactory();
@@ -42,11 +44,11 @@ public class QuartzListener implements ServletContextListener {
 
             // configure time to start 
             java.util.Calendar startTime = java.util.Calendar.getInstance();
-            startTime.add(Calendar.MINUTE, 5);
+            startTime.add(Calendar.MINUTE, 1);
 
             // create new job 
             JobDetail jobDetail = new JobDetail("tib-hotfolder", "Goobi Admin Plugin", QuartzHotfolderJob.class);
-            Trigger trigger = TriggerUtils.makeMinutelyTrigger(5);
+            Trigger trigger = TriggerUtils.makeMinutelyTrigger(1);
             trigger.setName("tib-hotfolder");
             trigger.setStartTime(startTime.getTime());
 
