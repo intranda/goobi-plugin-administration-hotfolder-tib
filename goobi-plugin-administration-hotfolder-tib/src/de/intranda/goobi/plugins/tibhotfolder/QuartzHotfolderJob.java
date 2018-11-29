@@ -14,9 +14,9 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.goobi.beans.Process;
 import org.goobi.beans.Processproperty;
 import org.goobi.beans.Step;
+import org.goobi.beans.Process;
 import org.goobi.managedbeans.LoginBean;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -112,14 +112,22 @@ public class QuartzHotfolderJob implements Job {
     private Process createNewProcess(Path dir, XMLConfiguration config) {
         Process template = ProcessManager.getProcessById(config.getInt("templateId"));
         Prefs prefs = template.getRegelsatz().getPreferences();
-        String barcode = dir.getFileName().toString();
+        String folderName = dir.getFileName().toString();
+        String[] split = folderName.split("_");
+        String barcode = split[0];
+        String scanner = split[1];
         ConfigOpacCatalogue coc = ConfigOpac.getInstance().getCatalogueByName("TIB");
         IOpacPlugin importer = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, "PICA");
         Process process = null;
         try {
             Fileformat ff = importer.search("8535", barcode, coc, prefs);
             process = cloneTemplate(template);
-            process.setTitel(barcode.replace("$", "_"));
+            process.setTitel(folderName.replace("$", "_"));
+            Processproperty pp = new Processproperty();
+            pp.setProzess(process);
+            pp.setTitel("Scanner-Name");
+            pp.setWert(scanner);
+            PropertyManager.saveProcessProperty(pp);
             NeuenProzessAnlegen(process, template, ff, prefs);
 
         } catch (Exception e) {
