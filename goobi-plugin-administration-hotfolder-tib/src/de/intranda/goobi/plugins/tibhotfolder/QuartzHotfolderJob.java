@@ -115,7 +115,7 @@ public class QuartzHotfolderJob implements Job {
         String[] split = folderName.split("_");
         String barcode = split[0];
         String scanner = split[1];
-        ConfigOpacCatalogue coc = ConfigOpac.getInstance().getCatalogueByName("TIB");
+        ConfigOpacCatalogue coc = ConfigOpac.getInstance().getCatalogueByName("TIB-TOC");
         IOpacPlugin importer = (IOpacPlugin) PluginLoader.getPluginByTitle(PluginType.Opac, "PICA");
         Process process = null;
         try {
