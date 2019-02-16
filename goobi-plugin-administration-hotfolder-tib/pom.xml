@@ -8,7 +8,6 @@
 	<packaging>pom</packaging>
     <modules>
         <module>module-gui</module>
-        <module>module-main</module>
     </modules>
     <distributionManagement>
         <repository>

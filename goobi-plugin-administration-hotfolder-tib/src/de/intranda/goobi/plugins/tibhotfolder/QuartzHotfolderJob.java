@@ -61,15 +61,17 @@ public class QuartzHotfolderJob implements Job {
         }
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(hotFolderPath)) {
             for (Path dir : ds) {
-                log.debug("working with folder " + dir.getFileName());
-                if (!checkIfCopyingDone(dir)) {
-                    continue;
-                }
                 Path lockFile = dir.resolve(".intranda_lock");
                 if (Files.exists(lockFile)) {
+                	log.debug("Skipping folder " + dir.getFileName() + " as it has a .lock file already.");
                     continue;
                 }
+                if (!checkIfCopyingDone(dir)) {
+                	continue;
+                }
+                log.debug("Starting to import folder " + dir.getFileName());
                 try (OutputStream os = Files.newOutputStream(lockFile)) {
+                	log.debug("Lock file created: " + lockFile);
                 }
                 //the dir is done copying. read barcode from it and request catalogue
                 Process p = createNewProcess(dir, config);
@@ -98,13 +100,14 @@ public class QuartzHotfolderJob implements Job {
                         }
                     }
                     FileUtils.deleteQuietly(dir.toFile());
+                } else {
+                	log.error("The process for " + dir.getFileName() + " could not get created");
                 }
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            log.error(e);
+            log.error("IOException while creating a process " ,  e);
         } catch (InterruptedException | DAOException | SwapException e) {
-            // never happens
+        	log.error("Error occured while creating a process " ,  e);
         }
     }
 
@@ -112,6 +115,11 @@ public class QuartzHotfolderJob implements Job {
         Process template = ProcessManager.getProcessById(config.getInt("templateId"));
         Prefs prefs = template.getRegelsatz().getPreferences();
         String folderName = dir.getFileName().toString();
+        if (!folderName.contains("_")) {
+        	log.error("The folder name " + dir.getFileName() + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
+        	return null;
+        }
+        
         String[] split = folderName.split("_");
         String barcode = split[0];
         String scanner = split[1];
@@ -130,9 +138,7 @@ public class QuartzHotfolderJob implements Job {
             PropertyManager.saveProcessProperty(pp);
 
         } catch (Exception e) {
-            // TODO Write error file to hotfolder error-folder
-            log.error(e);
-            e.printStackTrace();
+        	log.error("Exception happened while requesting the catalogue for " + dir.getFileName() ,  e);
             return null;
         }
         return process;
@@ -144,21 +150,30 @@ public class QuartzHotfolderJob implements Job {
         }
         Date now = new Date();
         FileTime dirAccessTime = Files.readAttributes(dir, BasicFileAttributes.class).lastModifiedTime();
-        log.debug("now: " + now + " dirAccessTime: " + dirAccessTime);
+//        log.debug("now: " + now + " dirAccessTime: " + dirAccessTime);
         long smallestDifference = now.getTime() - dirAccessTime.toMillis();
         int fileCount = 0;
         try (DirectoryStream<Path> folderFiles = Files.newDirectoryStream(dir)) {
             for (Path file : folderFiles) {
                 fileCount++;
                 FileTime fileAccessTime = Files.readAttributes(file, BasicFileAttributes.class).lastModifiedTime();
-                log.debug("now: " + now + " fileAccessTime: " + fileAccessTime);
+//                log.debug("now: " + now + " fileAccessTime: " + fileAccessTime);
                 long diff = now.getTime() - fileAccessTime.toMillis();
                 if (diff < smallestDifference) {
                     smallestDifference = diff;
                 }
             }
         }
-        return (FIVEMINUTES < smallestDifference) && fileCount > 0;
+//        log.debug("Folder is old enough to start the import: " + (FIVEMINUTES < smallestDifference));
+//        log.debug("Number of files to import: " + fileCount);
+        
+        if ((FIVEMINUTES < smallestDifference) && fileCount > 0) {
+        	log.debug("Folder " + dir.getFileName() + " is old enough and contains files. Import can start.");
+        	return true;
+        } else {
+        	log.debug("Folder " + dir.getFileName() + " is not old enough or does not contain files. Import skipped.");
+        	return false;
+        }
     }
 
     public void NeuenProzessAnlegen(Process process, Process template, Fileformat ff, Prefs prefs) throws Exception {
