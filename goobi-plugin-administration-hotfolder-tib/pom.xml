@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.intranda.goobi.plugins.administration</groupId>
 	<artifactId>hotfolder-tib</artifactId>
@@ -11,14 +9,14 @@
     </modules>
     <distributionManagement>
         <repository>
-            <id>intranda</id>
-			<url>http://nexus.intranda.com/repository/intranda</url>
+            <id>intranda-releases</id>
+			<url>https://nexus.intranda.com/repository/maven-releases</url>
 		</repository>
 	</distributionManagement>
 	<repositories>
 		<repository>
-			<id>intranda</id>
-			<url>https://nexus.intranda.com/repository/intranda</url>
+			<id>intranda-public</id>
+			<url>https://nexus.intranda.com/repository/maven-public</url>
 		</repository>
 	</repositories>
 	<dependencies>
