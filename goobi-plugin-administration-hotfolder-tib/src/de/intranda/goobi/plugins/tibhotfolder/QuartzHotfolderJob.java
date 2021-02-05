@@ -105,9 +105,9 @@ public class QuartzHotfolderJob implements Job {
                 }
             }
         } catch (IOException e) {
-            log.error("IOException while creating a process " ,  e);
+            log.error("IOException while creating a process ", e);
         } catch (InterruptedException | DAOException | SwapException e) {
-            log.error("Error occured while creating a process " ,  e);
+            log.error("Error occured while creating a process ", e);
         }
     }
 
@@ -116,7 +116,8 @@ public class QuartzHotfolderJob implements Job {
         Prefs prefs = template.getRegelsatz().getPreferences();
         String folderName = dir.getFileName().toString();
         if (!folderName.contains("_")) {
-            log.error("The folder name " + dir.getFileName() + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
+            log.error("The folder name " + dir.getFileName()
+                    + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
             return null;
         }
 
@@ -138,7 +139,7 @@ public class QuartzHotfolderJob implements Job {
             PropertyManager.saveProcessProperty(pp);
 
         } catch (Exception e) {
-            log.error("Exception happened while requesting the catalogue for " + dir.getFileName() ,  e);
+            log.error("Exception happened while requesting the catalogue for " + dir.getFileName(), e);
             return null;
         }
         return process;
@@ -182,7 +183,7 @@ public class QuartzHotfolderJob implements Job {
 
             step.setBearbeitungszeitpunkt(process.getErstellungsdatum());
             step.setEditTypeEnum(StepEditType.AUTOMATIC);
-            LoginBean loginForm = (LoginBean) Helper.getManagedBeanValue("#{LoginForm}");
+            LoginBean loginForm = Helper.getLoginBean();
             if (loginForm != null) {
                 step.setBearbeitungsbenutzer(loginForm.getMyBenutzer());
             }
@@ -202,7 +203,8 @@ public class QuartzHotfolderJob implements Job {
         Processproperty pp = new Processproperty();
         pp.setProzess(process);
         pp.setTitel("OLR ausführen");
-        List<? extends Metadata> metaList = ff.getDigitalDocument().getLogicalDocStruct().getAllMetadataByType(prefs.getMetadataTypeByName("ConferenceIndicator"));
+        List<? extends Metadata> metaList =
+                ff.getDigitalDocument().getLogicalDocStruct().getAllMetadataByType(prefs.getMetadataTypeByName("ConferenceIndicator"));
         String activate = "nein";
         if (metaList != null && !metaList.isEmpty()) {
             for (Metadata md : metaList) {
