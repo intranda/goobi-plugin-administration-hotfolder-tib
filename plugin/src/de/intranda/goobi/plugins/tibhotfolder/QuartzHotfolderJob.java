@@ -106,7 +106,7 @@ public class QuartzHotfolderJob implements Job {
             }
         } catch (IOException e) {
             log.error("IOException while creating a process ", e);
-        } catch (InterruptedException | DAOException | SwapException e) {
+        } catch (DAOException | SwapException e) {
             log.error("Error occured while creating a process ", e);
         }
     }
@@ -117,7 +117,7 @@ public class QuartzHotfolderJob implements Job {
         String folderName = dir.getFileName().toString();
         if (!folderName.contains("_")) {
             log.error("The folder name " + dir.getFileName()
-                    + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
+            + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
             return null;
         }
 
