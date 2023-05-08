@@ -19,12 +19,10 @@ import org.goobi.beans.Processproperty;
 import org.goobi.beans.Step;
 import org.goobi.managedbeans.LoginBean;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.flow.jobs.AbstractGoobiJob;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IOpacPlugin;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.BeanHelper;
@@ -47,11 +45,16 @@ import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 @Log4j
-public class QuartzHotfolderJob implements Job {
+public class QuartzHotfolderJob extends AbstractGoobiJob {
     private static final long FIVEMINUTES = 1000 * 60 * 1;
 
     @Override
-    public void execute(JobExecutionContext jec) throws JobExecutionException {
+    public String getJobName() {
+        return "tib-hotfolder";
+    }
+
+    @Override
+    public void execute() {
         XMLConfiguration config = ConfigPlugins.getPluginConfig("intranda_admin_hotfolder_tib");
         String hotFolder = config.getString("hotfolder");
         Path hotFolderPath = Paths.get(hotFolder);
@@ -82,8 +85,8 @@ public class QuartzHotfolderJob implements Job {
                     try (DirectoryStream<Path> dirDs = Files.newDirectoryStream(dir)) {
                         for (Path file : dirDs) {
                             String filename = file.getFileName().toString();
-                            if (filename.equalsIgnoreCase("thumbs.db") || filename.equalsIgnoreCase(".ds_store") || filename.equalsIgnoreCase(
-                                    ".intranda_lock")) {
+                            if ("thumbs.db".equalsIgnoreCase(filename) || ".ds_store".equalsIgnoreCase(filename) || ".intranda_lock".equalsIgnoreCase(
+                                    filename)) {
                                 continue;
                             }
                             try (OutputStream os = Files.newOutputStream(masterPath.resolve(file.getFileName()))) {
@@ -94,7 +97,7 @@ public class QuartzHotfolderJob implements Job {
                     //start first automatic step
                     List<Step> steps = StepManager.getStepsForProcess(p.getId());
                     for (Step s : steps) {
-                        if (s.getBearbeitungsstatusEnum().equals(StepStatus.OPEN) && s.isTypAutomatisch()) {
+                        if (StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()) && s.isTypAutomatisch()) {
                             ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
                             myThread.start();
                         }
@@ -117,7 +120,7 @@ public class QuartzHotfolderJob implements Job {
         String folderName = dir.getFileName().toString();
         if (!folderName.contains("_")) {
             log.error("The folder name " + dir.getFileName()
-            + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
+                    + " does not contain any underscore to get the Scanner name from it. The name should be something like '89$140210016_ScannerABC'");
             return null;
         }
 
