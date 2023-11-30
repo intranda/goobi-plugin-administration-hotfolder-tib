@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.intranda.goobi.plugins.step</groupId>
   <artifactId>hotfolder-tib-gui</artifactId>
-  <version>23.10.1</version>
+  <version>23.10.2</version>
   <properties>
     <jar.name>plugin_intranda_administration_tibhotfolder-GUI</jar.name>
     <dest.folder>/opt/digiverso/goobi/plugins/GUI/</dest.folder>
@@ -10,7 +10,7 @@
   <parent>
     <groupId>de.intranda.goobi.plugins.administration</groupId>
     <artifactId>hotfolder-tib</artifactId>
-    <version>23.10.1</version>
+    <version>23.10.2</version>
   </parent>
   <repositories>
     <repository>
