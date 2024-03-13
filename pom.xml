@@ -10,7 +10,7 @@
   <artifactId>plugin-administration-hotfolder-tib</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>module-base</module>
+    <module>module-lib</module>
   </modules>
   <repositories>
     <repository>
