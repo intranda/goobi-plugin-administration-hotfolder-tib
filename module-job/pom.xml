@@ -5,6 +5,6 @@
     <artifactId>plugin-administration-hotfolder-tib</artifactId>
     <version>24.03-SNAPSHOT</version>
   </parent>
-  <artifactId>plugin-administration-hotfolder-tib-lib</artifactId>
+  <artifactId>plugin-administration-hotfolder-tib-job</artifactId>
   <packaging>jar</packaging>
 </project>
