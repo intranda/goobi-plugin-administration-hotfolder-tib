@@ -3,6 +3,6 @@
 		<exec executable="mvn">
 			<arg value="package"/>
 		</exec>
-		<copy file="module-gui/target/plugin_intranda_administration_tibhotfolder-GUI.jar" todir="/opt/digiverso/goobi/plugins/GUI/"/>
+        <copy file="module-gui/target/plugin-administration-hotfolder-tib-job.jar" todir="/opt/digiverso/goobi/plugins/GUI/"/>
 	</target>
 </project>
